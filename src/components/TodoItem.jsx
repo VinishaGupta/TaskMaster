@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -9,27 +9,19 @@ export default function TodoItem({
   editTask,
   deleteTask,
   dragHandleProps,
-  dragging
+  dragging,
 }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(task.text);
-
-  const saveEdit = () => {
-    if (value.trim()) editTask(task.id, value.trim());
-    setIsEditing(false);
-  };
-
   return (
     <div
       className={`flex items-center gap-4 px-4 py-3 
         bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-        rounded-lg shadow-sm transition-all duration-150
-        ${dragging ? "shadow-2xl" : ""}
+        rounded-xl shadow transition-all duration-150
+        ${dragging ? "shadow-2xl scale-[1.01]" : ""}
       `}
     >
       <div
         {...dragHandleProps}
-        className="cursor-grab p-1 text-gray-500 hover:text-gray-700"
+        className="cursor-grab active:cursor-grabbing p-1 text-gray-500 hover:text-gray-700"
       >
         <DragIndicatorIcon fontSize="small" />
       </div>
@@ -42,14 +34,14 @@ export default function TodoItem({
       />
 
       <span
-        className={`flex-1 truncate ${
+        className={`flex-1 truncate select-none ${
           task.completed ? "line-through text-gray-400" : ""
         }`}
       >
         {task.text}
       </span>
 
-      <button onClick={() => setIsEditing(true)}>
+      <button onClick={() => editTask(task.id)}>
         <EditIcon fontSize="small" />
       </button>
 

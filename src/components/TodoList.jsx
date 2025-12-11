@@ -7,17 +7,24 @@ export default function TodoList({
   visibleTasks,
   deleteTask,
   editTask,
-  toggleComplete
+  toggleComplete,
+  onDragStart,
+  onDragEnd
 }) {
   const { reorderTodos } = useTodos();
 
   function handleDragEnd(result) {
-    if (!result.destination) return;
+    if (!result.destination) {
+      onDragEnd();
+      return;
+    }
+
+    onDragEnd();
     reorderTodos(result.source.index, result.destination.index);
   }
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext onDragStart={onDragStart} onDragEnd={handleDragEnd}>
       <Droppable droppableId="tasklist">
         {(provided) => (
           <div
@@ -28,21 +35,16 @@ export default function TodoList({
             {visibleTasks.map((task, index) => (
               <Draggable key={task.id} draggableId={String(task.id)} index={index}>
                 {(prov, snapshot) => {
-                  const libStyle = prov.draggableProps.style || {};
-
-                  // Only NON-dragging items animate
-                  const mergedStyle = {
-                    ...libStyle,
-                    transition: snapshot.isDragging
-                      ? "none"
-                      : "transform 200ms ease"
+                  const style = {
+                    ...prov.draggableProps.style,
+                    transition: snapshot.isDragging ? "none" : "transform 180ms ease"
                   };
 
                   return (
                     <div
                       ref={prov.innerRef}
                       {...prov.draggableProps}
-                      style={mergedStyle}
+                      style={style}
                     >
                       <TodoItem
                         task={task}
@@ -57,6 +59,7 @@ export default function TodoList({
                 }}
               </Draggable>
             ))}
+
             {provided.placeholder}
           </div>
         )}

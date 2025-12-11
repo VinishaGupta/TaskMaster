@@ -29,14 +29,12 @@ export default function App() {
   const [sortType, setSortType] = useState("newest");
   const [filterType, setFilterType] = useState("all");
 
-  // 🔥 Snackbar state
+  // 🔥 SNACKBAR STATE
   const [snack, setSnack] = useState({ open: false, message: "" });
 
-  // 🔥 Show snackbar when a task is deleted
   useEffect(() => {
     if (lastDeleted) {
       setSnack({ open: true, message: "Task deleted" });
-
       const t = setTimeout(() => setSnack({ open: false, message: "" }), 3000);
       return () => clearTimeout(t);
     }
@@ -49,22 +47,28 @@ export default function App() {
 
   const stableSetSearch = useCallback((v) => setSearch(v), [setSearch]);
 
-  // 🔥 Filter + Sort + Search combined
+  // ----------------------------
+  // 🔥 FIX: DISABLE SORT WHILE DRAGGING
+  // ----------------------------
+  const [isDragging, setIsDragging] = useState(false);
+
   const visibleTasks = useMemo(() => {
     let list = todos || [];
 
     if (filterType === "active") list = list.filter((t) => !t.completed);
     else if (filterType === "completed") list = list.filter((t) => t.completed);
 
-    const q = (debouncedSearch || "").trim().toLowerCase();
+    const q = debouncedSearch.trim().toLowerCase();
     if (q) list = list.filter((t) => t.text.toLowerCase().includes(q));
 
-    list = [...list].sort((a, b) =>
-      sortType === "newest" ? b.id - a.id : a.id - b.id
-    );
+    if (!isDragging) {
+      list = [...list].sort((a, b) =>
+        sortType === "newest" ? b.id - a.id : a.id - b.id
+      );
+    }
 
     return list;
-  }, [todos, filterType, debouncedSearch, sortType]);
+  }, [todos, filterType, debouncedSearch, sortType, isDragging]);
 
   return (
     <div className="min-h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -99,7 +103,7 @@ export default function App() {
           </div>
         )}
 
-        {/* MAIN SCROLLING CONTAINER */}
+        {/* TASK LIST */}
         <div
           className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 overflow-y-auto"
           style={{ maxHeight: "60vh" }}
@@ -109,32 +113,21 @@ export default function App() {
             deleteTask={deleteTodo}
             editTask={editTodo}
             toggleComplete={toggleTodo}
+            onDragStart={() => setIsDragging(true)}
+            onDragEnd={() => setIsDragging(false)}
           />
         </div>
       </div>
 
-      {/* 🔥 FIXED SNACKBAR (FINAL, NO MOVEMENT) */}
+      {/* SNACKBAR */}
       {snack.open && (
         <div
           className="
-            fixed
-            bottom-6
-            left-1/2
-            -translate-x-1/2
-            bg-white/95
-            dark:bg-gray-800/95
-            px-5 py-3
-            rounded-xl
-            shadow-lg
-            animate-snackbar-slide
-            z-50
+            fixed bottom-6 left-1/2 -translate-x-1/2
+            bg-white/95 dark:bg-gray-800/95
+            px-5 py-3 rounded-xl shadow-lg
+            animate-snackbar-slide z-50
           "
-          style={{
-            position: "fixed",
-            bottom: "24px",
-            left: "50%",
-            transform: "translateX(-50%)",
-          }}
         >
           <div className="flex items-center gap-6">
             <span className="font-medium">{snack.message}</span>
@@ -148,6 +141,7 @@ export default function App() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
