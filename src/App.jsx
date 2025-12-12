@@ -32,10 +32,18 @@ export default function App() {
   const [snack, setSnack] = useState({ open: false, message: "" });
   const [isDragging, setIsDragging] = useState(false);
 
+  // prevent page from scrolling (important)
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   useEffect(() => {
     if (lastDeleted) {
       setSnack({ open: true, message: "Task deleted" });
-      const t = setTimeout(() => setSnack({ open: false, message: "" }), 3000);
+      const t = setTimeout(() => setSnack({ open: false, message: "" }), 2500);
       return () => clearTimeout(t);
     }
   }, [lastDeleted]);
@@ -66,10 +74,11 @@ export default function App() {
   }, [todos, filterType, debouncedSearch, sortType, isDragging]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col gap-6">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
 
-        <div className="flex justify-between items-center">
+      <div className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-6">
+
+        <div className="flex justify-between items-center mb-2">
           <h1 className="text-4xl font-extrabold">Task Master</h1>
           <ThemeToggle />
         </div>
@@ -78,7 +87,6 @@ export default function App() {
           <div className="flex-1">
             <SearchBar searchText={search} setSearch={stableSetSearch} />
           </div>
-
           <FilterTabs filterType={filterType} setFilterType={setFilterType} />
           <SortDropdown sortType={sortType} setSortType={setSortType} />
         </div>
@@ -93,12 +101,13 @@ export default function App() {
           </div>
         )}
 
-        {/* Outer scroll container */}
+        {/* TASK WINDOW ONLY IS SCROLLABLE */}
         <div
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow p-3"
           style={{
-            maxHeight: "60vh",
+            height: "62vh",
             overflowY: "auto",
+            overflowX: "hidden",
           }}
         >
           <TodoList
@@ -118,16 +127,12 @@ export default function App() {
 
       {snack.open && (
         <div
-          className="
-            fixed bottom-6 left-1/2 -translate-x-1/2
+          className="fixed bottom-6 left-1/2 -translate-x-1/2
             bg-white/95 dark:bg-gray-800/95
-            px-5 py-3 rounded-xl shadow-lg
-            animate-snackbar-slide z-50
-          "
+            px-5 py-3 rounded-xl shadow-lg animate-snackbar-slide z-50"
         >
           <div className="flex items-center gap-6">
             <span className="font-medium">{snack.message}</span>
-
             <button
               onClick={handleUndo}
               className="text-blue-400 hover:text-blue-300 font-semibold"
