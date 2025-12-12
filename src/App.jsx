@@ -22,15 +22,15 @@ export default function App() {
     restoreDeleted,
     editTodo,
     toggleTodo,
+    reorderTodos,
   } = useTodos();
 
   const { search, setSearch, debouncedSearch } = useSearch("");
 
   const [sortType, setSortType] = useState("newest");
   const [filterType, setFilterType] = useState("all");
-
-  // 🔥 SNACKBAR STATE
   const [snack, setSnack] = useState({ open: false, message: "" });
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     if (lastDeleted) {
@@ -47,11 +47,6 @@ export default function App() {
 
   const stableSetSearch = useCallback((v) => setSearch(v), [setSearch]);
 
-  // ----------------------------
-  // 🔥 FIX: DISABLE SORT WHILE DRAGGING
-  // ----------------------------
-  const [isDragging, setIsDragging] = useState(false);
-
   const visibleTasks = useMemo(() => {
     let list = todos || [];
 
@@ -61,7 +56,7 @@ export default function App() {
     const q = debouncedSearch.trim().toLowerCase();
     if (q) list = list.filter((t) => t.text.toLowerCase().includes(q));
 
-    if (!isDragging) {
+    if (sortType !== "custom") {
       list = [...list].sort((a, b) =>
         sortType === "newest" ? b.id - a.id : a.id - b.id
       );
@@ -71,55 +66,56 @@ export default function App() {
   }, [todos, filterType, debouncedSearch, sortType, isDragging]);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col gap-6">
 
-        {/* HEADER */}
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-extrabold">Task Master</h1>
           <ThemeToggle />
         </div>
 
-        {/* SEARCH + FILTERS */}
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <SearchBar searchText={search} setSearch={stableSetSearch} />
           </div>
+
           <FilterTabs filterType={filterType} setFilterType={setFilterType} />
           <SortDropdown sortType={sortType} setSortType={setSortType} />
         </div>
 
-        {/* ADD TASK */}
         <AddTask addTask={addTodo} adding={adding} />
 
-        {/* LOADING */}
         {loading && <LoadingSpinner size={42} />}
 
-        {/* ERROR */}
         {error && (
           <div className="py-3 px-4 text-sm text-red-700 bg-red-100 rounded">
             {error}
           </div>
         )}
 
-        {/* TASK LIST */}
+        {/* Outer scroll container */}
         <div
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 overflow-y-auto"
-          style={{ maxHeight: "60vh" }}
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6"
+          style={{
+            maxHeight: "60vh",
+            overflowY: "auto",
+          }}
         >
           <TodoList
             visibleTasks={visibleTasks}
             deleteTask={deleteTodo}
             editTask={editTodo}
             toggleComplete={toggleTodo}
-            onDragStart={() => setIsDragging(true)}
+            reorderTodos={reorderTodos}
+            onDragStart={() => {
+              setSortType("custom");
+              setIsDragging(true);
+            }}
             onDragEnd={() => setIsDragging(false)}
           />
         </div>
       </div>
 
-      {/* SNACKBAR */}
       {snack.open && (
         <div
           className="
@@ -141,7 +137,6 @@ export default function App() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

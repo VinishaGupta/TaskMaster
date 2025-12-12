@@ -35,7 +35,7 @@ export async function fetchTodos() {
   if (!data || data.length === 0) {
     const sample = [
       { id: Date.now() - 2000, text: "Sample Task 1", completed: false },
-      { id: Date.now() - 1000, text: "Sample Task 2", completed: true },
+      { id: Date.now() - 1000, text: "Sample Task 2", completed: true },{ id: Date.now() - 1000, text: "Sample Task 2", completed: true },{ id: Date.now() - 1000, text: "Sample Task 2", completed: true },{ id: Date.now() - 1000, text: "Sample Task 2", completed: true },
     ];
     saveToStorage(sample);
     return sample;

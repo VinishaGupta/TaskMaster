@@ -2,20 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Lock page */
+/* Smooth theme transitions */
+* {
+  transition: background-color 0.25s ease,
+              color 0.25s ease,
+              border-color 0.25s ease;
+}
+
+/* Ensure proper scrolling */
 html, body {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  margin: 0;
 }
 
 body {
   font-family: "Roboto", sans-serif;
 }
 
-/* Root must not scroll */
+/* Root should not force height */
 #root {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
 }
 
 /* Spinner */
@@ -23,47 +29,77 @@ body {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
-.spin { animation: spinAnim 0.7s linear infinite; }
+.spin {
+  animation: spinAnim 0.7s linear infinite;
+}
 
-/* FIXED SNACKBAR ANIMATION */
+/* Snackbar animation */
 @keyframes snackbar-slide {
   0% { transform: translate(-50%, 20px); opacity: 0; }
   100% { transform: translate(-50%, 0); opacity: 1; }
 }
-
 .animate-snackbar-slide {
   animation: snackbar-slide 0.28s ease-out;
 }
 
-/* remove outlines */
+/* Dropdown focus outline */
 select {
   outline: none !important;
-  text-decoration: none !important;
 }
 select:focus {
-  outline: none !important;
   border-color: #3b82f6 !important;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4) !important;
 }
 
-
-/* Smooth transform for draggable rows (fallback) */
+/* DnD smooth motion */
 [data-rbd-draggable-context-id] .rbd-draggable,
 .rbd-draggable {
   transition: transform 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Make sure item shadow & transform animate smoothly */
 .todo-item {
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 
-html, body {
-  height: 100%;
-  overflow-x: hidden;
+* {
+  transition: background-color 0.4s ease,
+              color 0.4s ease,
+              border-color 0.4s ease;
 }
 
-#root {
-  height: 100%;
+html, body {
+  transition: background-color 0.4s ease;
 }
+
+/* ===== Custom Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;            /* Invisible track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.4);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 160, 160, 0.6);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(200, 200, 200, 0.25);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+
+
