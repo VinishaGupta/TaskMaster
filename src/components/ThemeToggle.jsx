@@ -3,10 +3,22 @@ import SunIcon from "../assets/icons/sun.png";
 import MoonIcon from "../assets/icons/moon.png";
 
 function ThemeToggle() {
-  const [isDark, setIsDark] = useState(
-    () => typeof window !== "undefined" && localStorage.getItem("theme") === "dark"
-  );
+  const [isDark, setIsDark] = useState(false);
 
+  // Load saved theme BEFORE first paint
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+
+    if (saved === "dark") {
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  // Apply theme on toggle
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -31,13 +43,15 @@ function ThemeToggle() {
       <img
         src={SunIcon}
         alt="sun"
-        className={`w-5 h-5 absolute left-2 transition-opacity pointer-events-none ${isDark ? "opacity-0" : "opacity-100"}`}
+        className={`w-5 h-5 absolute left-2 transition-opacity pointer-events-none 
+        ${isDark ? "opacity-0" : "opacity-100"}`}
       />
 
       <img
         src={MoonIcon}
         alt="moon"
-        className={`w-5 h-5 absolute right-2 transition-opacity pointer-events-none ${isDark ? "opacity-100" : "opacity-0"}`}
+        className={`w-5 h-5 absolute right-2 transition-opacity pointer-events-none 
+        ${isDark ? "opacity-100" : "opacity-0"}`}
       />
     </button>
   );

@@ -1,9 +1,13 @@
 import React from "react";
 
 export default function LoadingSpinner({ size = 36 }) {
-  // inline fallback styling to ensure spinning always works
   return (
-    <div className="flex justify-center py-4">
+    <div
+      className="flex justify-center py-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading"
+    >
       <div
         style={{
           width: size,

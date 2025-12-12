@@ -10,10 +10,12 @@ export default function SortDropdown({ sortType, setSortType }) {
   ];
 
   return (
-    <div className="relative select-none">
+    <nav className="relative select-none" aria-label="Sort Tasks">
       {/* BUTTON */}
       <button
         onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
         className="flex items-center justify-between gap-2
                    px-4 py-2 w-32
                    bg-white dark:bg-gray-800
@@ -28,19 +30,21 @@ export default function SortDropdown({ sortType, setSortType }) {
       {/* DROPDOWN MENU */}
       {open && (
         <div
+          role="menu"
           className="absolute left-0 mt-2 w-44
                      bg-white dark:bg-gray-800
                      border border-gray-300 dark:border-gray-700
                      rounded-xl shadow-lg z-50 overflow-hidden"
         >
           {options.map((o) => (
-            <div
+            <button
+              role="menuitem"
               key={o.value}
               onClick={() => {
                 setSortType(o.value);
                 setOpen(false);
               }}
-              className={`px-4 py-2 cursor-pointer
+              className={`text-left w-full px-4 py-2 cursor-pointer
                           hover:bg-blue-600 hover:text-white
                           ${
                             sortType === o.value
@@ -49,10 +53,10 @@ export default function SortDropdown({ sortType, setSortType }) {
                           }`}
             >
               {o.label}
-            </div>
+            </button>
           ))}
         </div>
       )}
-    </div>
+    </nav>
   );
 }
