@@ -10,15 +10,22 @@ export function taskReducer(state, action) {
   switch (action.type) {
     case "FETCH_START":
       return { ...state, loading: true, error: null };
+
     case "FETCH_SUCCESS":
       return { ...state, loading: false, todos: action.payload, error: null };
+
     case "FETCH_ERROR":
       return { ...state, loading: false, error: action.payload };
 
+    case "CLEAR_ERROR":
+      return { ...state, error: null };
+
     case "ADD_START":
       return { ...state, adding: true };
+
     case "ADD_END":
       return { ...state, adding: false };
+
     case "ADD_TODO":
       return { ...state, todos: [...state.todos, action.payload] };
 
@@ -32,7 +39,9 @@ export function taskReducer(state, action) {
     case "RESTORE_DELETED":
       return {
         ...state,
-        todos: state.lastDeleted ? [...state.todos, state.lastDeleted] : state.todos,
+        todos: state.lastDeleted
+          ? [...state.todos, state.lastDeleted]
+          : state.todos,
         lastDeleted: null,
       };
 
@@ -40,7 +49,9 @@ export function taskReducer(state, action) {
       return {
         ...state,
         todos: state.todos.map((t) =>
-          t.id === action.payload ? { ...t, completed: !t.completed } : t
+          t.id === action.payload
+            ? { ...t, completed: !t.completed }
+            : t
         ),
       };
 
@@ -52,11 +63,12 @@ export function taskReducer(state, action) {
         ),
       };
 
-    case "REORDER_TODOS":
+    case "REORDER_TODOS": {
       const updated = [...state.todos];
       const [moved] = updated.splice(action.payload.from, 1);
       updated.splice(action.payload.to, 0, moved);
       return { ...state, todos: updated };
+    }
 
     default:
       return state;

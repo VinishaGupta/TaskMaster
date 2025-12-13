@@ -12,27 +12,32 @@ function TodoItem({
   dragging,
 }) {
   return (
-    <div
+    <article
       className={`flex items-center gap-3 px-3 py-2 
       bg-white dark:bg-gray-800 
       border border-gray-200 dark:border-gray-700 
       rounded-xl shadow-sm
       ${dragging ? "shadow-xl scale-[1.01]" : ""}`}
     >
-      <div
+      {/* Drag handle */}
+      <span
         {...dragHandleProps}
         className="cursor-grab active:cursor-grabbing p-1 text-gray-500"
+        aria-label="Drag task"
       >
         <DragIndicatorIcon fontSize="small" />
-      </div>
+      </span>
 
+      {/* Checkbox */}
       <input
         type="checkbox"
         checked={task.completed}
         onChange={() => toggleComplete(task.id)}
         className="w-4 h-4"
+        aria-label="Toggle complete"
       />
 
+      {/* Task text */}
       <span
         className={`flex-1 truncate text-[15px] ${
           task.completed ? "line-through text-gray-400" : ""
@@ -41,20 +46,27 @@ function TodoItem({
         {task.text}
       </span>
 
+      {/* Edit button */}
       <button
         onClick={() => editTask(task.id)}
         className="text-gray-700 dark:text-gray-200"
+        aria-label="Edit task"
       >
-        <EditIcon fontSize="small" />
+        <EditIcon fontSize="small" className="text-gray-700 dark:text-gray-200" />
       </button>
 
+      {/* Delete button — NOW black in light mode & white in dark mode */}
       <button
         onClick={() => deleteTask(task.id)}
         className="text-black dark:text-white"
+        aria-label="Delete task"
       >
-        <DeleteIcon fontSize="small" />
+        <DeleteIcon
+          fontSize="small"
+          className="text-black dark:text-white"
+        />
       </button>
-    </div>
+    </article>
   );
 }
 

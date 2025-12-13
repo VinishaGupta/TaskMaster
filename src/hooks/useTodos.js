@@ -2,20 +2,41 @@ import { useContext } from "react";
 import { TodosContext } from "../context/TodosContext";
 
 export default function useTodos() {
-  const ctx = useContext(TodosContext);
-  if (!ctx) throw new Error("useTodos must be used inside TodosProvider");
+  const context = useContext(TodosContext);
+
+  if (!context) {
+    throw new Error("useTodos must be used inside TodosProvider");
+  }
+
+  const {
+    todos,
+    loading,
+    error,
+    adding,
+    lastDeleted,
+
+    addTodo,
+    deleteTodo,
+    restoreDeleted,
+    toggleTodo,
+    editTodo,
+    reorderTodos,
+    clearError,
+  } = context;
 
   return {
-    todos: ctx.todos,
-    loading: ctx.loading,
-    error: ctx.error,
-    adding: ctx.adding,
-    lastDeleted: ctx.lastDeleted,
-    addTodo: ctx.addTodo,
-    deleteTodo: ctx.deleteTodo,
-    restoreDeleted: ctx.restoreDeleted,
-    toggleTodo: ctx.toggleTodo,
-    editTodo: ctx.editTodo,
-    reorderTodos: ctx.reorderTodos, // <- new
+    todos,
+    loading,
+    error,
+    adding,
+    lastDeleted,
+
+    addTodo,
+    deleteTodo,
+    restoreDeleted,
+    toggleTodo,
+    editTodo,
+    reorderTodos,
+    clearError,
   };
 }
